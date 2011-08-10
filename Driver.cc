@@ -1,3 +1,6 @@
+// Written by Jasson Casey
+// Copyright (C) 2011. All rights reserved.
+
 #include <iostream>
 extern "C" {
    #include <pcap.h>
@@ -12,7 +15,7 @@ const char* usage_error = "usage error: ./pmurec <interface>";
 static const int MaxPacketSize = 1500 ;
 
 void pcap_callback( u_char *args, const struct pcap_pkthdr *hdr, const u_char *pkt ) {
-   ProtocolMonitor::Device<ProtocolMonitor::EthernetII> dev ;
+   ProtoNet::Device<ProtoNet::EthernetII> dev ;
    dev.Recieve( (char*)pkt, (int)hdr->caplen, (struct timeval*)&hdr->ts );
 }
 

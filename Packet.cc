@@ -1,6 +1,9 @@
+// Written by Jasson Casey
+// Copyright (C) 2011. All rights reserved.
+
 #include "Packet.h"
 
-namespace ProtocolMonitor {
+namespace ProtoNet {
 
 int Packet::CurrentID = 1;
 

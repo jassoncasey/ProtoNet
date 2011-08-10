@@ -1,6 +1,9 @@
+// Written by Jasson Casey
+// Copyright (C) 2011. All rights reserved.
+
 #include "Device.h"
 
-namespace ProtocolMonitor {
+namespace ProtoNet {
 
 void Device::Recieve( char* ptr, int len, struct timeval* t ) {
 

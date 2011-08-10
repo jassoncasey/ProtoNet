@@ -1,9 +1,12 @@
+// Written by Jasson Casey
+// // Copyright (C) 2011. All rights reserved.
+
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
 #include "Packet.h"
 
-namespace ProtocolMonitor {
+namespace ProtoNet {
 
 class Protocol {
 

@@ -1,6 +1,9 @@
+// Written by Jasson Casey
+// Copyright (C) 2011. All rights reserved.
+
 #include "IPv4.h"
 
-namespace ProtocolMonitor {
+namespace ProtoNet {
 
 void IPv4::Print( std::ostream& out ) {
    out << "-----------IPv4 Header---------" << std::endl;

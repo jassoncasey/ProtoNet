@@ -1,10 +1,13 @@
+// Written by Jasson Casey
+// Copyright (C) 2011. All rights reserved.
+
 #ifndef DEVICE_H
 #define DEVICE_H
 
 #include <vector>
 #include "Protocol.h"
 
-namespace ProtocolMonitor {
+namespace ProtoNet {
 
 template <typename ProtoType>
 class Device {

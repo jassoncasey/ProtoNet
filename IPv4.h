@@ -1,9 +1,12 @@
+// Written by Jasson Casey
+// Copyright (C) 2011. All rights reserved.
+
 #ifndef IPV4_H
 #define IPV4_H
 
 #include "Protocol.h"
 
-namespace ProtocolMonitor {
+namespace ProtoNet {
 
 extern "C" {
    struct IPv4Hdr {

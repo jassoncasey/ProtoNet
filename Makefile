@@ -1,3 +1,6 @@
+# Written by Jasson Casey
+# Copyright (C) 2011. All rights reserved.
+
 COMPILER=g++
 CLFLAGS=-Wall 
 TARGET=pmurec

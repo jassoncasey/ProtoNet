@@ -1,10 +1,13 @@
+// Written by Jasson Casey
+// Copyright (C) 2011. All rights reserved.
+
 #ifndef PACKET_H
 #define PACKET_H
 
 #include <vector>
 #include "Util.h"
 
-namespace ProtocolMonitor {
+namespace ProtoNet {
 
 class Protocol;
 

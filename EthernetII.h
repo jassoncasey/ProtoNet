@@ -1,9 +1,12 @@
+// Written by Jasson Casey
+// Copyright (C) 2011. All rights reserved.
+
 #ifndef ETHERNETII_H
 #define ETHERNETII_H
 
 #include "Protocol.h"
 
-namespace ProtocolMonitor {
+namespace ProtoNet {
 
 extern "C" {
    struct EthernetIIHdr {

@@ -1,6 +1,9 @@
+// Written by Jasson Casey
+// Copyright (C) 2011. All rights reserved.
+
 #include "Util.h"
 
-namespace ProtocolMonitor {
+namespace ProtoNet {
 
    template <typename T> 
    std::ostream& operator<<( std::ostream& out, const Hex<T>& h ) { 

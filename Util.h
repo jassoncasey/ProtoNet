@@ -1,3 +1,6 @@
+// Written by Jasson Casey
+// Copyright (C) 2011. All rights reserved.
+
 #ifndef UTIL_H
 #define UTIL_H
 
@@ -9,7 +12,7 @@ extern "C" {
    #include <stdint.h>
 }
 
-namespace ProtocolMonitor {
+namespace ProtoNet {
 
 class UInt8 {
    private:

@@ -1,3 +1,6 @@
+// Written by Jasson Casey
+// Copyright (C) 2011. All rights reserved.
+
 #ifndef TCP_H
 #define TCP_H
 

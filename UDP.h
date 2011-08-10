@@ -1,3 +1,7 @@
+// Written by Jasson Casey
+// Copyright (C) 2011. All rights reserved.
+
+
 #ifndef UDP_H
 #define UDP_H
 
