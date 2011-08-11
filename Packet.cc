@@ -7,22 +7,22 @@ namespace ProtoNet {
 
 int Packet::CurrentID = 1;
 
-void packet_impl::Recieve( char* ptr, int len, struct timeval* t ) {
-
+void Packet::Recieve( uint8_t* ptr, int len, struct timeval* t ) {
    // Set the length
-   if ( len > MaxBufferSize ) {
+   if ( len > bsize ) {
       truncated = true ;
-      length = MaxBufferSize ;
+      plength = bsize ;
    }
    else
-      length = len;
+      plength = len;
 
    // Copy the recieve time and update ID
-   memcpy( &tm, obstm, sizeof(struct timeval) );
+   memcpy( &tm, t, sizeof(struct timeval) );
    id = CurrentID++;
 
    // Copy the recieved data
-   memcpy( buffer, ptr, length );
+   memcpy( buffer.get(), ptr, plength );
+}
 
    /*
 
@@ -43,7 +43,6 @@ void packet_impl::Recieve( char* ptr, int len, struct timeval* t ) {
    }
 
    */
-}
 
 }
 

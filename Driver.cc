@@ -15,8 +15,8 @@ const char* usage_error = "usage error: ./pmurec <interface>";
 static const int MaxPacketSize = 1500 ;
 
 void pcap_callback( u_char *args, const struct pcap_pkthdr *hdr, const u_char *pkt ) {
-   ProtoNet::Device<ProtoNet::EthernetII> dev ;
-   dev.Recieve( (char*)pkt, (int)hdr->caplen, (struct timeval*)&hdr->ts );
+   ProtoNet::Device dev( new ProtoNet::EthernetII() ) ;
+   dev.Recieve( (uint8_t*)pkt, (int)hdr->caplen, (struct timeval*)&hdr->ts );
 }
 
 void err_close( pcap_t* handle ) {

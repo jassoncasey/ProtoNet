@@ -11,19 +11,19 @@ namespace ProtoNet {
 class Protocol {
 
    public:
+      class Visitor;
+
+   public:
       Protocol() : packet(0), offset(0), prev(0), next(0), bytes(0) {}
 
-      template <int MaxSize>
-      virtual void Recieve( Packet& p )   = 0;
-
-      virtual Protocol* MakeCarriedType() const    = 0 ;
-
+      virtual void Recieve( Packet& p ) = 0 ;
+      virtual int GetMTU() const = 0 ;
+      virtual Protocol* MakeCarriedType() const = 0 ; 
       virtual bool UnknownPayload()  const = 0 ;
       virtual bool FilteredPayload() const = 0 ;
+      virtual void Print( std::ostream& out ) const = 0 ;
 
-      virtual void Print( std::iostream& out ) const = 0;
-
-      virtual int GetBytes() const { return bytes } ;
+      virtual int GetBytes() const { return bytes ; }
       void SetPrev( const Protocol* p ) { prev = p ; }
       void SetNext( const Protocol* p ) { next = p ; }
 
@@ -38,17 +38,11 @@ class Protocol {
       int bytes ;
 };
 
-std::ostream& operator<<( std::ostream& out, const Protocol& p );
-
-template <typename T>
-class protocol_impl : public Protocol {
-   public:
-      T value_type;
-
-      void accept( Visitor& v ) {
-         v.visit( *this ) ;
-      }
+class Protocol::Visitor {
+   virtual void visit( Protocol& p ) {}
 };
+
+std::ostream& operator<<( std::ostream& out, const Protocol& p );
 
 class ProtocolFilter {
 

@@ -33,7 +33,9 @@ class Hex {
    public:
       Hex( PrecisionType c ) : value(c) {}
       void Print( std::ostream& out ) const {
-         out << std::hex << (((int)value) & std::numeric_limits<PrecisionType>::max()) << std::dec ;
+         out << std::hex ;
+         out << ( ( (int)value ) & std::numeric_limits<PrecisionType>::max() ) ;
+         out << std::dec ;
       }
 };
 
@@ -42,7 +44,10 @@ typedef Hex<uint16_t>   HexU16 ;
 typedef Hex<uint32_t>   HexU32 ;
 
 template <typename T>
-std::ostream& operator<<( std::ostream& out, const Hex<T>& h ) ;
+std::ostream& operator<<( std::ostream& out, const Hex<T>& h ) {
+   h.Print( out ) ;
+   return out ;
+}
 
 class EthernetAddr {
 

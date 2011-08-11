@@ -5,82 +5,72 @@
 #define PACKET_H
 
 #include <vector>
+#include <memory>
 #include "Util.h"
 
 namespace ProtoNet {
 
-class Protocol;
-
+class Protocol; 
 class Packet {
+
    public:
       static int CurrentID;
 
    public:
-      Packet() : length(0), offset(0), id(0), truncated(false) {
+      Packet( int len ) : plength(0), bsize(len), offset(0), id(0), truncated(false) {
          bzero( &tm, sizeof( struct timeval ) ) ;
+         buffer.reset( new uint8_t[ bsize ] ) ;
+         bzero( buffer.get(), bsize ) ;
       }
-      Packet( const Packet& p ) : length(p.length), offset(p.offset),
-                                    id(p.id), truncated(p.trunated) {
+      Packet( const Packet& p ) : plength(p.plength), bsize(p.bsize), offset(p.offset),
+                                    id(p.id), truncated(p.truncated) {
          memcpy( &tm, &p.tm, sizeof( struct timeval ) ) ;
+         buffer.reset( new uint8_t[ bsize ] ) ;
+         memcpy( buffer.get(), p.buffer.get(), bsize ) ;
       }
       Packet& operator=( const Packet& p ) {
-         length = p.length ;
+         plength = p.plength ;
+         bsize = p.bsize ;
          offset = p.offset ;
          id = p.id ;
          truncated = p.truncated ;
 
          memcpy( &tm, &p.tm, sizeof( struct timeval ) ) ;
+         buffer.reset( new uint8_t[ bsize ] ) ;
+         memcpy( buffer.get(), p.buffer.get(), bsize ) ;
+
+         return *this ;
       }
 
-      virtual void Recieve( char* ptr, int len, struct timeval* t ) = 0 ;
-      virtual int GetOffset() const = 0 ;
-      virtual char* GetPtr() const = 0 ;
+      void Recieve( uint8_t* ptr, int len, struct timeval* t ) ;
 
-      virtual int GetRemainingBytes() const {
-         return length - offset ;
+      int GetOffset() const { return offset ; } 
+      uint8_t* GetPtr( int os ) const { return buffer.get() + os ; }
+      uint8_t* GetPosition() const { return buffer.get() + offset ; }
+      int GetRemainingBytes() const {
+         return plength - offset ;
       }
-      virtual void IncrementOffset(int) {
-         if ( offset + o > length )
+      void IncrementOffset( int o ) {
+         if ( offset + o > plength )
             throw 1; 
          offset += o ;
       }
 
+      void AddProtocol( Protocol* p ) { 
+         protocols.push_back( p ) ; 
+      }
+
    protected:
-      int length ;
+      int plength ;
+      int bsize ;
       int offset ;
       int id ;
       bool truncated ;
 
       struct timeval tm ;
+      std::auto_ptr<uint8_t> buffer ;
+      std::vector<Protocol*> protocols;
 } ;
-
-template <int MAXBUFSIZE>
-class packet_impl : public Packet {
-
-   public:
-      static const int MaxBufferSize = MAXBUFSIZE;
-
-   public:
-      explicit packet_impl() : Packet() {
-         bzero( buffer, MaxBufferSize );
-      }
-      packet_impl( const Packet& b ) : Packet(*this) {
-         memcpy( buffer, b.buffer, length );
-      }
-      packet_impl& operator=( const packet_impl& b ) {
-         Packet::operator=( *this ) ;
-         memcpy( buffer, b.buffer, length );
-      }
-
-      void Recieve( char* ptr, int len, struct timeval* t );
-      char* GetPosition() const { return buffer + (char*)offset ; }
-      char* GetPtr( int o ) const { return buffer + (char*)o ; }
-
-   private:
-      char buffer[MaxBufferSize];
-
-      std::vector<Protocol> protocols;
-};
 
 }
 

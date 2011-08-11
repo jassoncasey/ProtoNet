@@ -6,8 +6,9 @@ CLFLAGS=-Wall
 TARGET=pmurec
 LIBS=-lpcap
 
-OBJS=Driver.o Packet.o Protocol.o Util.o Device.o \
-	  EthernetII.o #IPv4.o #TCP.o #UDP.o
+OBJS=Driver.o Packet.o Protocol.o Device.o Util.o \
+	  EthernetII.o #IPv4.o #TCP.o #UDP.o \
+	  ARP.o ICMP.o DHCP.o
 
 $(TARGET) : $(OBJS)
 	$(COMPILER) -o $@ $^ $(LIBS)

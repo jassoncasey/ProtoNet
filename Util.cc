@@ -5,12 +5,6 @@
 
 namespace ProtoNet {
 
-   template <typename T> 
-   std::ostream& operator<<( std::ostream& out, const Hex<T>& h ) { 
-      h.Print( out ) ; 
-      return out ; 
-   }
-
    std::ostream& operator<<( std::ostream& out, const EthernetAddr& e ) {
       e.Print( out ) ;
       return out ;

@@ -9,17 +9,19 @@
 
 namespace ProtoNet {
 
-template <typename ProtoType>
 class Device {
 
    public:
-      typedef ProtoType proto_type ;
+      Device( Protocol* p ) : protocol(p) {}
+      Device( const Device& d ) : protocol( d.protocol.get() ) {}
+      Device& operator=( const Device& d ) {
+         protocol.reset( d.protocol.get() ) ;
+      }
 
-   public:
-      void Recieve( char* ptr, int len, struct timeval* t ) ;
+      void Recieve( uint8_t* ptr, int len, struct timeval* t ) ;
 
    private:
-
+      std::auto_ptr<Protocol> protocol ;
       std::vector<Packet> queue ;
 };
 

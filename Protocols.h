@@ -6,6 +6,11 @@
 
 #include "Device.h"
 #include "EthernetII.h"
-#include "IPv4.h"
+//#include "IPv4.h"
+//#include "ARP.h"
+//#include "ICMP.h"
+//#include "TCP.h"
+//#include "UDP.h"
+//#include "DHCP.h"
 
 #endif
