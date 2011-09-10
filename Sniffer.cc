@@ -1,34 +1,63 @@
 #include "Sniffer.h"
 
-Sniffer::Sniffer( const std::string& d, int to, int ms,
-                  void (*)() r, void (*)() f ) : device(d),
-                  timeout(to), maxpacketsize(ms),recieve(r), 
-                  finish(f) {
+Sniffer::Sniffer( const std::string& i, int to, int mcs,
+                  void (*)( const Packet& ) p ) : interface(i),
+                  timeout(to), maxcapturesize(mcs), process(p) {
 
    char errbuf[PCAP_ERRBUF_SIZE];
 
    // Find the network address and mask of the listening device
-   if ( pcap_lookupnet( dev, &net, &mask, errbuf) == -1 ) {
-      std::cerr << "Failed to get network and mask of device: ";
-      std::cerr << dev << std::endl;
-      throw 1;
+   if ( pcap_lookupnet( interface.c_str(), &net, &mask, errbuf) == -1 ) {
+      Error error( "Failed to get network and mask of device: " );
+      error << interface ;
+      throw error ; 
    }
 
    // Open the device for recording
-   handle = pcap_open_live(dev, MaxPacketSize, 1, 1000, errbuf);
+   handle = pcap_open_live(interface.c_str(), maxcapturesize, 1, timeout, errbuf);
    if ( handle == 0 ) {
-      std::cerr << "Could not open device: " << dev << std::endl;
-      std::cerr << "Error: " << errbuf << std::endl;
-      throw 1;
+      Error error( "Could not open device: " ) ;
+      error << interface << std::endl << "Error: " << errbuf << std::endl;
+      throw error ;
    }
    
 }
 
 Sniffer::~Sniffer() {
    pcap_close( signal_handle ) ;
-   // Possibly a terrible idea
-   finish() ;
 }
 
-void UpdateFilter( const std::string& f ) {
+void Sniffer::Callback( u_char *args, const struct pcap_pkthdr *hdr, const u_char *pkt ) {
+   process( Packet( i(uint8_t*)pkt, (int)hdr->caplen, Time( hdr->ts )) ) ;
+}
+
+void Run( const std::string& f ) {
+   filter = f ;
+
+   // Compile a packet filter for 118.2 msg(s)
+   struct bpf_program fp;
+   if ( pcap_compile( handle, &fp, filter.c_str(), 0, net ) == -1 ) {
+      Error error( " Failed to compile packet filter" ) ;
+      error << std::endl << "Filter: " << filter << std::endl;
+      error << "Error: " << pcap_geterr( handle ) << std::endl;
+
+      throw error ;
+   }
+
+   // Apply the filter
+   if ( pcap_setfilter( handle, &fp ) == -1 ) {
+      Error error( "Failed to install packet filter" ) ;
+
+      throw error ;
+   }
+  
+   // Put recorder into a dispatch loop
+   if ( pcap_loop( handle, 0, Callback, 0 ) == -1 ) {
+      Error error( "Failed to dispatch callback" );
+      error << std::endl << "Error: " << pcap_geterr( handle ) << std::endl;
+
+      throw error ;
+   }
+   
+
 }
