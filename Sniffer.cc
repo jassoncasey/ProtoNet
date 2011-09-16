@@ -1,7 +1,7 @@
 #include "Sniffer.h"
 
 Sniffer::Sniffer( const std::string& i, int to, int mcs,
-                  void (*)( const Packet& ) p ) : interface(i),
+                  void (*p)( const Packet& ) ) : interface(i),
                   timeout(to), maxcapturesize(mcs), process(p) {
 
    char errbuf[PCAP_ERRBUF_SIZE];
@@ -28,7 +28,11 @@ Sniffer::~Sniffer() {
 }
 
 void Sniffer::Callback( u_char *args, const struct pcap_pkthdr *hdr, const u_char *pkt ) {
-   process( Packet( i(uint8_t*)pkt, (int)hdr->caplen, Time( hdr->ts )) ) ;
+   // Is this a truncated packet 
+   if ( hdr->caplen < hdr->len )
+      process( Packet( (uint8_t*)pkt, (int)hdr->caplen, Time( hdr->ts )), true ) ;
+   else
+      process( Packet( (uint8_t*)pkt, (int)hdr->caplen, Time( hdr->ts )) ) ;
 }
 
 void Run( const std::string& f ) {

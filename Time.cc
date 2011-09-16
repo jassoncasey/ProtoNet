@@ -1,6 +1,10 @@
 #include "Time.h"
 
-std::ostream& ProtoNet::operator<<( std::ostream& out, const Time& t ) {
+namespace ProtoNet {
+
+std::ostream& operator<<( std::ostream& out, const Time& t ) {
    t.Print( out ) ;
    return out ;
+}
+
 }

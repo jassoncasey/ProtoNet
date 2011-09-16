@@ -2,13 +2,11 @@
 # Copyright (C) 2011. All rights reserved.
 
 COMPILER=g++
-CLFLAGS=-Wall 
+CFLAGS=-Wall 
 TARGET=pmurec
 LIBS=-lpcap
 
-OBJS=Driver.o Packet.o Protocol.o Device.o Util.o \
-	  EthernetII.o #IPv4.o #TCP.o #UDP.o \
-	  ARP.o ICMP.o DHCP.o
+OBJS= Time.o Error.o Packet.o Sniffer.o
 
 $(TARGET) : $(OBJS)
 	$(COMPILER) -o $@ $^ $(LIBS)

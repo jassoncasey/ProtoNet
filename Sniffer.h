@@ -6,13 +6,9 @@ extern "C" {
    #include <signal.h>
 }
 
-/*
-template <typename T>
-std::ostream& operator<<( std::ostream& out, const T& t ) {
-   t.Print( out ) ;
-   return out;
-}
-*/
+#include <string>
+
+class PCapError : public Error {} ;
 
 class Sniffer {
 
@@ -21,13 +17,10 @@ class Sniffer {
       /* Initialize with device name, timeout, max size of capture per packet,
        * and a callback function that can process individual packet receptions. 
        */ 
-      Sniffer( const std::string&, int, int,
-               void (*)( const Packet& p ) p) ; 
-
+      Sniffer( const std::string&, int, int, void (*p)( const Packet& ) ) ;
       ~Sniffer();
 
       void Run( const std::string& f ) ;
-
       void Callback( u_char*, const struct pcap_pkthdr*, const u_char* ) ;
 
    private:
