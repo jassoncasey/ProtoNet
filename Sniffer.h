@@ -3,7 +3,6 @@
 
 extern "C" {
    #include <pcap.h>
-   #include <signal.h>
 }
 
 #include "Error.h"
@@ -24,6 +23,9 @@ class Sniffer {
       /* Start capturing packets using the filter string f
        */
       void Run( const std::string& f ) ;
+      void Stop() {
+         pcap_breakloop( handle ) ;
+      }
       static void Callback( u_char*, const struct pcap_pkthdr*, const u_char* ) ;
 
    private:

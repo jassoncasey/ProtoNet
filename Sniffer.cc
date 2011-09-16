@@ -64,7 +64,7 @@ void Sniffer::Run( const std::string& f ) {
    }
 
    // Apply the filter
-   if ( pcap_setfilter( handle, &fp ) == -1 ) {
+   if ( pcap_setfilter(handle, &fp ) == -1 ) {
       Error error( "Failed to install packet filter" ) ;
 
       throw error ;
