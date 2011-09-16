@@ -4,6 +4,11 @@
 #include <memory>
 #include "Time.h"
 
+extern "C" {
+   #include <stdint.h>
+   #include <stdlib.h>
+}
+
 namespace ProtoNet {
    
 class Packet {

@@ -2,6 +2,7 @@
 #define TIME_H
 
 extern "C" {
+   #include <string.h>
    #include <sys/time.h>
 }
 
