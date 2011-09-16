@@ -34,7 +34,6 @@ void Sniffer::Callback( u_char *args, const struct pcap_pkthdr *hdr, const u_cha
 void Run( const std::string& f ) {
    filter = f ;
 
-   // Compile a packet filter for 118.2 msg(s)
    struct bpf_program fp;
    if ( pcap_compile( handle, &fp, filter.c_str(), 0, net ) == -1 ) {
       Error error( " Failed to compile packet filter" ) ;

@@ -6,16 +6,24 @@ extern "C" {
    #include <signal.h>
 }
 
+/*
 template <typename T>
 std::ostream& operator<<( std::ostream& out, const T& t ) {
    t.Print( out ) ;
    return out;
 }
+*/
 
 class Sniffer {
+
    public:
+
+      /* Initialize with device name, timeout, max size of capture per packet,
+       * and a callback function that can process individual packet receptions. 
+       */ 
       Sniffer( const std::string&, int, int,
                void (*)( const Packet& p ) p) ; 
+
       ~Sniffer();
 
       void Run( const std::string& f ) ;
