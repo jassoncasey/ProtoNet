@@ -39,6 +39,9 @@ class Packet {
       
       void Print( std::ostream& out ) const {
       }
+
+      uint8_t* GetBuffer() const { return buffer.get() ; }
+      int GetSize() const { return buffsize; }
       
    private:
       std::auto_ptr<uint8_t> buffer ;

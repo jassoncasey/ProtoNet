@@ -4,8 +4,6 @@ extern "C" {
    #include <signal.h>
 }
 
-ProtoNet::Sniffer* ptr = 0;
-
 void handle_signal(int signum ) {
    ProtoNet::Sniffer::StopAll();
 }
@@ -30,8 +28,10 @@ int main( int argc, char** argv ) {
       signal(SIGINT, handle_signal);
 
       // Run a second sniffer
-      ptr = & sniffer ;
       sniffer.Run(argv[2]);
+
+      // This isn't a great idea ... to run more than one interface will
+      // require the pcap_next method or threads ... this just creates two serial sniffers
       snif2.Run("tcp");
    }
    catch ( ProtoNet::Error& e ) {
