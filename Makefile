@@ -4,16 +4,24 @@
 COMPILER=g++
 CFLAGS=-Wall 
 TARGET=pmurec
+TEST1=test1
 LIBS=-lpcap
 
-OBJS= Time.o Error.o Packet.o Sniffer.o
+TARGETS= $(TARGET) $(TEST1)
 
-$(TARGET) : $(OBJS)
+OBJS= Time.o Error.o Packet.o Sniffer.o 
+
+default: $(TEST1) $(TARGET)
+
+$(TEST1) : $(OBJS) $(TEST1).o
+	$(COMPILER) -o $@ $^ $(LIBS)
+
+$(TARGET) : $(OBJS) $(TARGET).o
 	$(COMPILER) -o $@ $^ $(LIBS)
 
 %.o:%.cc
 	$(COMPILER) $(CLFAGS) -c $^
 
 clean:
-	rm -f $(TARGET)
-	rm -f $(OBJS)
+	rm -f $(TARGETS)
+	rm -r *.o

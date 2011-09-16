@@ -6,9 +6,10 @@ extern "C" {
    #include <signal.h>
 }
 
-#include <string>
+#include "Error.h"
+#include "Packet.h"
 
-class PCapError : public Error {} ;
+namespace ProtoNet {
 
 class Sniffer {
 
@@ -20,20 +21,26 @@ class Sniffer {
       Sniffer( const std::string&, int, int, void (*p)( const Packet& ) ) ;
       ~Sniffer();
 
+      /* Start capturing packets using the filter string f
+       */
       void Run( const std::string& f ) ;
-      void Callback( u_char*, const struct pcap_pkthdr*, const u_char* ) ;
+      static void Callback( u_char*, const struct pcap_pkthdr*, const u_char* ) ;
 
    private:
       std::string interface;
       int timeout;
       int maxcapturesize;
 
-      void (*process)( const Packet& p );
+      static void (*process)( const Packet& p );
       
       std::string filter;
 
       bpf_u_int32 net, mask;
       pcap_t* handle;
+
+      static bool inuse ;
 };
+
+}
 
 #endif
