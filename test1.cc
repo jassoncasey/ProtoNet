@@ -7,7 +7,7 @@ extern "C" {
 ProtoNet::Sniffer* ptr = 0;
 
 void handle_signal(int signum ) {
-   ptr->Stop();
+   ProtoNet::Sniffer::StopAll();
 }
 
 void process( const ProtoNet::Packet& packet ) {
@@ -25,11 +25,14 @@ int main( int argc, char** argv ) {
 
    try {
       ProtoNet::Sniffer sniffer(argv[1], 0, 1500, process );
+      ProtoNet::Sniffer snif2("eth4", 0, 1500, process ) ;
 
       signal(SIGINT, handle_signal);
 
+      // Run a second sniffer
       ptr = & sniffer ;
       sniffer.Run(argv[2]);
+      snif2.Run("tcp");
    }
    catch ( ProtoNet::Error& e ) {
       std::cout << e << std::endl;

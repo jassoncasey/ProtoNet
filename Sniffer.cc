@@ -1,22 +1,14 @@
 #include "Sniffer.h"
 
-namespace ProtoNet {
+#include <sstream>
 
-bool Sniffer::inuse = false ;
-void (*Sniffer::process)( const Packet& p ) = 0 ;
+namespace ProtoNet {
 
 Sniffer::Sniffer( const std::string& i, int to, int mcs,
                   void (*p)( const Packet& ) ) : interface(i),
                   timeout(to), maxcapturesize(mcs) {
 
    char errbuf[PCAP_ERRBUF_SIZE];
-
-   if ( Sniffer::inuse ) {
-      Error error("Only one sniffer in use at a time");
-      throw error ;
-   }
-   else
-      Sniffer::inuse = true ;
 
    Sniffer::process = p ;
 
@@ -34,21 +26,40 @@ Sniffer::Sniffer( const std::string& i, int to, int mcs,
       error << interface << "\n" << "Error: " << errbuf << "\n" ;
       throw error ;
    }
-   
+  
+   std::stringstream ss;
+   ss << handle ;
+   char_id.reset( (u_char*) strdup( ss.str().c_str() ) ) ;
 }
 
 Sniffer::~Sniffer() {
    pcap_close( handle ) ;
-   Sniffer::inuse = false ;
-   Sniffer::process = 0 ;
 }
 
 void Sniffer::Callback( u_char *args, const struct pcap_pkthdr *hdr, const u_char *pkt ) {
+   std::tr1::unordered_map<u_char*,Sniffer*>::iterator itr;
+   itr = sniffers.find( args );
+   if ( itr == sniffers.end() )
+      return;
+
+   Sniffer* sniffer = (*itr).second ;
+
    // Is this a truncated packet 
    if ( hdr->caplen < hdr->len )
-      process( Packet( (uint8_t*)pkt, (int)hdr->caplen, Time( hdr->ts ), true ) ) ;
+      sniffer->Process( Packet( (uint8_t*)pkt, (int)hdr->caplen, Time( hdr->ts ), true ) ) ;
    else
-      process( Packet( (uint8_t*)pkt, (int)hdr->caplen, Time( hdr->ts )) ) ;
+      sniffer->Process( Packet( (uint8_t*)pkt, (int)hdr->caplen, Time( hdr->ts )) ) ;
+}
+
+void Sniffer::Process( const Packet& p ) {
+   process( p ) ;
+}
+
+void Sniffer::StopAll() {
+   std::tr1::unordered_map<u_char*,Sniffer*>::iterator itr;
+   for( itr = sniffers.begin(); itr != sniffers.end(); ++itr ) {
+      (*itr).second->Stop() ;
+   }
 }
 
 void Sniffer::Run( const std::string& f ) {
@@ -69,9 +80,10 @@ void Sniffer::Run( const std::string& f ) {
 
       throw error ;
    }
-  
-   // Put recorder into a dispatch loop
-   if ( pcap_loop( handle, 0, Sniffer::Callback, 0 ) == -1 ) {
+
+   // Set self into the map
+   sniffers[ char_id.get() ] = this ;
+   if ( pcap_loop( handle, 0, Sniffer::Callback, char_id.get() ) == -1 ) {
       Error error( "Failed to dispatch callback" );
       error << "\n" << "Error: " << pcap_geterr( handle ) << "\n";
 

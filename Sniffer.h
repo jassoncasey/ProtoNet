@@ -8,7 +8,12 @@ extern "C" {
 #include "Error.h"
 #include "Packet.h"
 
+#include <tr1/unordered_map>
+
 namespace ProtoNet {
+
+class Sniffer;
+static std::tr1::unordered_map<u_char*,Sniffer*> sniffers;
 
 class Sniffer {
 
@@ -23,24 +28,26 @@ class Sniffer {
       /* Start capturing packets using the filter string f
        */
       void Run( const std::string& f ) ;
+      static void StopAll();
       void Stop() {
          pcap_breakloop( handle ) ;
       }
       static void Callback( u_char*, const struct pcap_pkthdr*, const u_char* ) ;
+      void Process( const Packet& p ) ;
 
    private:
       std::string interface;
       int timeout;
       int maxcapturesize;
 
-      static void (*process)( const Packet& p );
+      void (*process)( const Packet& p );
       
       std::string filter;
 
       bpf_u_int32 net, mask;
       pcap_t* handle;
 
-      static bool inuse ;
+      std::auto_ptr<u_char> char_id ;
 };
 
 }
