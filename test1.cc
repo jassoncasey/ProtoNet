@@ -13,6 +13,11 @@ int main( int argc, char** argv ) {
    std::cout << "listening on interface: " << argv[1] << std::endl;
    std::cout << "using filter: " << argv[2] << std::endl;
 
-   ProtoNet::Sniffer sniffer("en0", 0, 1500, process );
-   sniffer.Run("udp");
+   try {
+      ProtoNet::Sniffer sniffer(argv[1], 0, 1500, process );
+      sniffer.Run(argv[2]);
+   }
+   catch ( ProtoNet::Error& e ) {
+      std::cout << e << std::endl;
+   }
 }
