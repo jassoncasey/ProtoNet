@@ -5,7 +5,7 @@
 namespace ProtoNet {
 
 Sniffer::Sniffer( const std::string& i, int to, int mcs,
-                  void (*p)( const Packet& ) ) : interface(i),
+                  void (*p)( Sniffer *hdl, const Packet& ) ) : interface(i),
                   timeout(to), maxcapturesize(mcs) {
 
    char errbuf[PCAP_ERRBUF_SIZE];
@@ -52,7 +52,7 @@ void Sniffer::Callback( u_char *args, const struct pcap_pkthdr *hdr, const u_cha
 }
 
 void Sniffer::Process( const Packet& p ) {
-   process( p ) ;
+   process( this, p ) ;
 }
 
 void Sniffer::StopAll() {

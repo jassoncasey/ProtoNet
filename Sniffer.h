@@ -22,7 +22,7 @@ class Sniffer {
       /* Initialize with device name, timeout, max size of capture per packet,
        * and a callback function that can process individual packet receptions. 
        */ 
-      Sniffer( const std::string&, int, int, void (*p)( const Packet& ) ) ;
+      Sniffer( const std::string&, int, int, void (*p)( Sniffer *hdl, const Packet& ) ) ;
       ~Sniffer();
 
       /* Start capturing packets using the filter string f
@@ -40,7 +40,7 @@ class Sniffer {
       int timeout;
       int maxcapturesize;
 
-      void (*process)( const Packet& p );
+      void (*process)( Sniffer *hdl, const Packet& p );
       
       std::string filter;
 

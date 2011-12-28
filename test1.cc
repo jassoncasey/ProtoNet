@@ -9,6 +9,7 @@ void handle_signal(int signum ) {
 }
 
 void process( const ProtoNet::Packet& packet ) {
+   
    std::cout << "I just recieved a packet packet" << std::endl;
 }
 
