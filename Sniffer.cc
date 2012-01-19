@@ -14,7 +14,8 @@ Sniffer::Sniffer( const std::string& i, int to, int mcs,
 
    // Find the network address and mask of the listening device
    if ( pcap_lookupnet( interface.c_str(), &net, &mask, errbuf ) == -1 ) {
-      Error error( "Failed to get network and mask of device: " );
+      // Error error( "Failed to get network and mask of device: " );
+      Error error( errbuf );
       error << interface ;
       throw error ; 
    }
