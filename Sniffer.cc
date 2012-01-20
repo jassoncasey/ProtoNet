@@ -1,16 +1,17 @@
 #include "Sniffer.h"
 
 #include <sstream>
+#include <tr1/unordered_map>
 
 namespace ProtoNet {
 
+static std::tr1::unordered_map<const char*,Sniffer*> sniffers;
+
 Sniffer::Sniffer( const std::string& i, int to, int mcs,
                   void (*p)( Sniffer *hdl, const Packet& ) ) : interface(i),
-                  timeout(to), maxcapturesize(mcs) {
+                  timeout(to), maxcapturesize(mcs), process(p) {
 
    char errbuf[PCAP_ERRBUF_SIZE];
-
-   Sniffer::process = p ;
 
    // Find the network address and mask of the listening device
    if ( pcap_lookupnet( interface.c_str(), &net, &mask, errbuf ) == -1 ) {
@@ -21,16 +22,18 @@ Sniffer::Sniffer( const std::string& i, int to, int mcs,
    }
 
    // Open the device for recording
-   handle = pcap_open_live(interface.c_str(), maxcapturesize, 1, timeout, errbuf);
+   handle = pcap_open_live( interface.c_str(), maxcapturesize, 1, timeout, 
+                              errbuf ) ;
    if ( handle == 0 ) {
       Error error( "Could not open device: " ) ;
       error << interface << "\n" << "Error: " << errbuf << "\n" ;
       throw error ;
    }
-  
+ 
+   // Convert the handle to a usable string
    std::stringstream ss;
    ss << handle ;
-   char_id.reset( (u_char*) strdup( ss.str().c_str() ) ) ;
+   char_id = ss.str();
 }
 
 Sniffer::~Sniffer() {
@@ -38,8 +41,8 @@ Sniffer::~Sniffer() {
 }
 
 void Sniffer::Callback( u_char *args, const struct pcap_pkthdr *hdr, const u_char *pkt ) {
-   std::tr1::unordered_map<u_char*,Sniffer*>::iterator itr;
-   itr = sniffers.find( args );
+   std::tr1::unordered_map<const char*,Sniffer*>::iterator itr;
+   itr = sniffers.find( reinterpret_cast<const char*>(args) );
    if ( itr == sniffers.end() )
       return;
 
@@ -57,7 +60,7 @@ void Sniffer::Process( const Packet& p ) {
 }
 
 void Sniffer::StopAll() {
-   std::tr1::unordered_map<u_char*,Sniffer*>::iterator itr;
+   std::tr1::unordered_map<const char*,Sniffer*>::iterator itr;
    for( itr = sniffers.begin(); itr != sniffers.end(); ++itr ) {
       (*itr).second->Stop() ;
    }
@@ -83,8 +86,8 @@ void Sniffer::Run( const std::string& f ) {
    }
 
    // Set self into the map
-   sniffers[ char_id.get() ] = this ;
-   if ( pcap_loop( handle, 0, Sniffer::Callback, char_id.get() ) == -1 ) {
+   sniffers[ char_id.c_str() ] = this ;
+   if ( pcap_loop( handle, 0, Sniffer::Callback, (u_char*)( char_id.c_str() ) ) == -1 ) {
       Error error( "Failed to dispatch callback" );
       error << "\n" << "Error: " << pcap_geterr( handle ) << "\n";
 

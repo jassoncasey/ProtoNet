@@ -8,6 +8,8 @@
 
 namespace ProtoNet {
 
+   /** Time - simple wrapper for the system supplied timeval structure
+    */
    class Time {
 
       public:
@@ -17,15 +19,10 @@ namespace ProtoNet {
          Time() {
             gettimeofday( &time, 0 ) ;
          }
-         Time( const struct timeval& tm ) {
-            time = tm;
-//            std::copy( &tm, &tm+size, &time);
-         } 
-         Time( const Time& t ) {
- //           std::copy( &t, &t+size, &time );
-         }
+         Time( const struct timeval& tm ) : time(tm) {}
+         Time( const Time& t ) : time(t.time) {}
          Time& operator=( const Time& t ) {
-  //          std::copy( &t, &t+size, &t.time );
+            time = t.time;
             return *this ;
          }
          bool operator<( const Time& t ) const {
@@ -37,8 +34,19 @@ namespace ProtoNet {
             else
                return false;
          }
+         bool operator==( const Time& t ) const {
+            if ( time.tv_sec != t.time.tv_sec )
+               return false;
+            if ( time.tv_usec != t.time.tv_usec )
+               return false;
+            return true;
+         }
+         bool operator!=( const Time& t ) const {
+            return !(*this == t);
+         }
          
          void Print( std::ostream& out ) const {
+            //out << time.tv_sec << ":" << time.tv_usec ;
          }
          
       private:

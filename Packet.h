@@ -2,10 +2,12 @@
 #define PACKET_H
 
 #include <memory>
-#include <cstdint>
+#include <tr1/cstdint>
 #include "Time.h"
 
 namespace ProtoNet {
+
+   /* Packet - simple wrapper of a packet from pcap */
    
 class Packet {
   
