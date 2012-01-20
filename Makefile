@@ -14,13 +14,13 @@ OBJS= Time.o Error.o Packet.o Sniffer.o
 default: $(TEST1) $(TARGET)
 
 $(TEST1) : $(OBJS) $(TEST1).o
-	$(COMPILER) $(CLFAGS) -g -o $@ $^ $(LIBS)
+	$(COMPILER) $(CLFAGS) -o $@ $^ $(LIBS)
 
-$(TARGET) : $(OBJS) $(TARGET).o
-	$(COMPILER) $(CLFAGS) -g -o $@ $^ $(LIBS)
+$(TARGET) : $(OBJS) 
+	$(COMPILER) $(CLFAGS) -o $@ $^ $(LIBS)
 
 %.o:%.cc
-	$(COMPILER) $(CLFAGS) -g -c $^
+	$(COMPILER) $(CLFAGS) -c $^
 
 clean:
 	rm -f $(TARGETS)

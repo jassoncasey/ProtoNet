@@ -18,7 +18,6 @@ static std::tr1::unordered_map<u_char*,Sniffer*> sniffers;
 class Sniffer {
 
    public:
-
       /* Initialize with device name, timeout, max size of capture per packet,
        * and a callback function that can process individual packet receptions. 
        */ 

@@ -1,28 +1,31 @@
 #ifndef TIME_H
 #define TIME_H
 
-extern "C" {
-   #include <string.h>
-   #include <sys/time.h>
-}
-
 #include <string>
+#include <algorithm>
+
+#include <sys/time.h>
 
 namespace ProtoNet {
 
    class Time {
+
+      public:
+         static const int size = sizeof( struct timeval );
+
       public:
          Time() {
             gettimeofday( &time, 0 ) ;
          }
          Time( const struct timeval& tm ) {
-            memcpy( &time, &tm, sizeof( struct timeval ) );
-         }
+            time = tm;
+//            std::copy( &tm, &tm+size, &time);
+         } 
          Time( const Time& t ) {
-            memcpy( &time, &t, sizeof( struct timeval ) );
+ //           std::copy( &t, &t+size, &time );
          }
          Time& operator=( const Time& t ) {
-            memcpy( &time, &t, sizeof( struct timeval ) );
+  //          std::copy( &t, &t+size, &t.time );
             return *this ;
          }
          bool operator<( const Time& t ) const {

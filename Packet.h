@@ -2,34 +2,32 @@
 #define PACKET_H
 
 #include <memory>
+#include <cstdint>
 #include "Time.h"
-
-extern "C" {
-   #include <stdint.h>
-   #include <stdlib.h>
-}
 
 namespace ProtoNet {
    
 class Packet {
   
    public:
-      Packet( uint8_t* ptr, int size, const Time& tm, bool trunc = false ) :
-                  buffsize(size), time(tm), truncated(trunc) {
+      Packet( uint8_t* ptr, int size, const Time& tm, bool trunc = false ) : 
+               buffsize(size), time(tm), truncated(trunc) {
          buffer.reset( new uint8_t[ buffsize ] ) ;
-         memcpy( buffer.get(), ptr, buffsize ) ;
-         
+         std::copy( ptr, ptr + buffsize, buffer.get() ) ;
       }
-      Packet( const Packet& p ) : buffsize( p.buffsize ), time(p.time), truncated( p.truncated ) {
+      Packet( const Packet& p ) : buffsize( p.buffsize ), time(p.time), 
+               truncated( p.truncated ) {
          buffer.reset( new uint8_t[ buffsize ] ) ;
-         memcpy( buffer.get(), p.buffer.get(), buffsize ) ;
+         uint8_t* ptr = p.buffer.get();
+         std::copy( ptr, ptr + buffsize, buffer.get() ) ;
       }
       Packet& operator=( const Packet& p ) {
          buffsize = p.buffsize ;
          truncated = p.truncated ;
-         memcpy( &time, &p.time, sizeof(struct timeval) ) ;
+         time = p.time;
          buffer.reset( new uint8_t[ buffsize ] ) ;
-         memcpy( buffer.get(), p.buffer.get(), buffsize ) ;
+         uint8_t* ptr = p.buffer.get();
+         std::copy( ptr, ptr + buffsize, buffer.get() ) ;
          return *this ;
       }
       
