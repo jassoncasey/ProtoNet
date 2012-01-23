@@ -8,14 +8,15 @@ void handle_signal(int signum ) {
    ProtoNet::Sniffer::StopAll();
 }
 
-void process( const ProtoNet::Packet& packet ) {
+void process( ProtoNet::Sniffer* snif, const ProtoNet::Packet& packet ) {
    
    std::cout << "I just recieved a packet packet" << std::endl;
 }
 
 int main( int argc, char** argv ) {
    if (argc != 3) {
-      std::cout<<"usage error: " << argv[0] << " <interface name> <filter rule>" << std::endl ; 
+      std::cout <<"usage error: " << argv[0] ;
+      std::cout << " <interface name> <filter rule>" << std::endl ; 
       exit(-1);
    }
 
@@ -32,7 +33,8 @@ int main( int argc, char** argv ) {
       sniffer.Run(argv[2]);
 
       // This isn't a great idea ... to run more than one interface will
-      // require the pcap_next method or threads ... this just creates two serial sniffers
+      // require the pcap_next method or threads ... this just creates 
+      // two serial sniffers
       snif2.Run("tcp");
    }
    catch ( ProtoNet::Error& e ) {

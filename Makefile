@@ -16,7 +16,7 @@ default: $(TEST1) $(TARGET)
 $(TEST1) : $(OBJS) $(TEST1).o
 	$(COMPILER) $(CLFAGS) -o $@ $^ $(LIBS)
 
-$(TARGET) : $(OBJS) 
+$(TARGET) : $(OBJS) $(TARGET).o
 	$(COMPILER) $(CLFAGS) -o $@ $^ $(LIBS)
 
 %.o:%.cc
