@@ -11,6 +11,8 @@ void handle_signal(int signum ) {
 void process( ProtoNet::Sniffer* snif, const ProtoNet::Packet& packet ) {
    
    std::cout << "I just recieved a packet packet" << std::endl;
+   std::cout << "packet length: " << packet.GetSize() << std::endl;
+   std::cout << "packet truncated: " << packet.Truncated() << std::endl;
 }
 
 int main( int argc, char** argv ) {
@@ -25,7 +27,7 @@ int main( int argc, char** argv ) {
 
    try {
       ProtoNet::Sniffer sniffer(argv[1], 0, 1500, process );
-      ProtoNet::Sniffer snif2("eth4", 0, 1500, process ) ;
+      //ProtoNet::Sniffer snif2("eth4", 0, 1500, process ) ;
 
       signal(SIGINT, handle_signal);
 
@@ -35,7 +37,7 @@ int main( int argc, char** argv ) {
       // This isn't a great idea ... to run more than one interface will
       // require the pcap_next method or threads ... this just creates 
       // two serial sniffers
-      snif2.Run("tcp");
+      //snif2.Run("tcp");
    }
    catch ( ProtoNet::Error& e ) {
       std::cout << e << std::endl;

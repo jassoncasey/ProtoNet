@@ -40,8 +40,9 @@ class Packet {
       void Print( std::ostream& out ) const {
       }
 
-      uint8_t* GetBuffer() const { return buffer.get() ; }
-      int GetSize() const { return buffsize; }
+      inline uint8_t* GetBuffer() const { return buffer.get() ; }
+      inline int GetSize() const { return buffsize; }
+      inline bool Truncated() const { return truncated; }
       
    private:
       std::auto_ptr<uint8_t> buffer ;

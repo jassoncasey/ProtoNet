@@ -40,7 +40,8 @@ Sniffer::~Sniffer() {
    pcap_close( handle ) ;
 }
 
-void Sniffer::Callback( u_char *args, const struct pcap_pkthdr *hdr, const u_char *pkt ) {
+void Sniffer::Callback( u_char *args, const struct pcap_pkthdr *hdr, 
+                        const u_char *pkt ) {
    std::tr1::unordered_map<const char*,Sniffer*>::iterator itr;
    itr = sniffers.find( reinterpret_cast<const char*>(args) );
    if ( itr == sniffers.end() )
@@ -49,10 +50,14 @@ void Sniffer::Callback( u_char *args, const struct pcap_pkthdr *hdr, const u_cha
    Sniffer* sniffer = (*itr).second ;
 
    // Is this a truncated packet 
-   if ( hdr->caplen < hdr->len )
-      sniffer->Process( Packet( (uint8_t*)pkt, (int)hdr->caplen, Time( hdr->ts ), true ) ) ;
-   else
-      sniffer->Process( Packet( (uint8_t*)pkt, (int)hdr->caplen, Time( hdr->ts )) ) ;
+   if ( hdr->caplen < hdr->len ) {
+      sniffer->Process( Packet((uint8_t*)pkt, (int)hdr->caplen, Time( hdr->ts ),
+                        true ) ) ;
+   }
+   else {
+      sniffer->Process( Packet((uint8_t*)pkt, (int)hdr->caplen, Time( hdr->ts ))
+                        ) ;
+   }
 }
 
 void Sniffer::Process( const Packet& p ) {
@@ -87,7 +92,8 @@ void Sniffer::Run( const std::string& f ) {
 
    // Set self into the map
    sniffers[ char_id.c_str() ] = this ;
-   if ( pcap_loop( handle, 0, Sniffer::Callback, (u_char*)( char_id.c_str() ) ) == -1 ) {
+   if ( pcap_loop( handle, 0, Sniffer::Callback, (u_char*)( char_id.c_str() ) ) 
+         == -1 ) {
       Error error( "Failed to dispatch callback" );
       error << "\n" << "Error: " << pcap_geterr( handle ) << "\n";
 
