@@ -40,6 +40,11 @@ class Packet {
       void Print( std::ostream& out ) const {
       }
 
+      Time GetTimeStamp() const
+      {
+         return time;
+      }
+
       inline uint8_t* GetBuffer() const { return buffer.get() ; }
       inline int GetSize() const { return buffsize; }
       inline bool Truncated() const { return truncated; }

@@ -45,6 +45,34 @@ namespace ProtoNet {
             return !(*this == t);
          }
          
+         Time& operator-( const Time& t ) 
+         {
+            if ( *this < t )
+            {
+               time.tv_sec = 0;
+               time.tv_usec = 0;
+            }
+            else
+            {
+               if (time.tv_usec < t.time.tv_usec)
+               {
+                  time.tv_usec += 1000000 - t.time.tv_usec;
+                  time.tv_sec -= t.time.tv_sec + 1;
+               } 
+               else
+               {
+                  time.tv_usec -= t.time.tv_usec;
+                  time.tv_sec -= t.time.tv_sec;
+               }
+            }
+            return *this;
+         }
+
+         operator unsigned long() const
+         {
+            return (time.tv_sec * 1000000 + time.tv_usec);
+         }
+
          void Print( std::ostream& out ) const {
             //out << time.tv_sec << ":" << time.tv_usec ;
          }
